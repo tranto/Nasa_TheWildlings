@@ -12,7 +12,7 @@ class SoundManager{
   Minim minim;//audio context
   boolean isPlayBackground;
   void init(){
-     minim = new Minim(Awesome.this);
+     minim = new Minim(SaveThePoles.this);
      player = minim.loadFile(PUNCH_AUDIO, 2048);
      isPlayBackground = false;
   }
