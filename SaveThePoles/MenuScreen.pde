@@ -14,9 +14,11 @@ int COUNT_DOWN_FONT_SIZE = 42;
 int ICECUBE_WIDTH = 154;
 int ICECUBE_HEIGHT = 128;
 int PADDING_TOP = 80;
+
 class Menu{
     PImage background;
     PImage iceCube;
+    PImage instruction;
     PFont font;
     color sampleColor;
     float sampleTargetX;
@@ -32,6 +34,8 @@ class Menu{
        this.font   = loadFont(FONT_NAME_48);
        background  = loadImage(ImagePath);
        iceCube     = loadImage(ICECUBE_PATH);
+       instruction = loadImage(INSTRUCTION_IMAGE);
+       instruction.resize(int(instruction.width*0.7), int(instruction.height*0.7));
        background.resize(1344, 756);
        sampleColor = color(255, random(200,217), random(197,214));
        float targetWidth = SMALLEST_CIRCLE_WIDTH * 4;
@@ -44,9 +48,11 @@ class Menu{
     
     void display(){
       if(!disappear){
+       
          image(background,0, 0);
          image(iceCube, (SCREEN_WIDTH - ICECUBE_WIDTH)/2, (SCREEN_HEIGHT - ICECUBE_HEIGHT)/2 + PADDING_TOP);
         // drawSimpleTarget();
+         image(instruction,(SCREEN_WIDTH - instruction.width)/2, SCREEN_HEIGHT - SCREEN_HEIGHT/4);
          textFont(font, TITLE_FONT_SIZE);
          String countDownNumber = "" + countDown;
          float textWidth = textWidth(countDownNumber);

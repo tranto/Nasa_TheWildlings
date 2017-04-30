@@ -19,6 +19,7 @@ String  MENU_BG_IMAGE = "images/background.jpg";
 String  GAME_PLAY_IMAGE = "images/gamescreen.jpg";
 String  SYMBOLS_END_GAME_IMAGE = "images/levelup_icon.png";
 String  TEST_DATA_FILE = "data/test_data.txt";
+String  INSTRUCTION_IMAGE = "images/instruction.png";
 String[]  ITEM_FILE_PATHS = {"data/images/bicycle.png","data/images/garbagebin.png","data/images/fridge.png","data/images/lightbuilb.png","data/images/planttree.png","data/images/solarpanel.png", "data/images/fuel.png", "data/images/aircon.png",};
 int     TIME_UP = 40100;//60100;
 int     COLLISION_DISTANCE = 75;
@@ -116,7 +117,7 @@ void draw()
             
             textFont(font,28);
             fill(HEADER_TEXT_COLOR);
-            text(YOUR_SCORE_TEXT + count,SCREEN_WIDTH/2,0);
+           // text(YOUR_SCORE_TEXT + count,SCREEN_WIDTH/2,0);
         
              //for (int i = 0; i< listTarget.length; i++){     
              //   if (listTarget[i].alive == true) {
@@ -128,7 +129,7 @@ void draw()
             time();
             
             // remove the following line when with Kinect device 
-           // watchHit(TEST_DATA_FILE);
+            //watchHit(TEST_DATA_FILE);
             if(context.isTrackingSkeleton(1)) {
                 drawSimpleFigure();
             }
@@ -198,14 +199,14 @@ void watchHit(String filepath) {
    for(int i=0; i < entries.length; i++) {
      println(entries[i]);
      // uncomment the following when plug into Kinect
-     //while(!targetFlip && count < entries.length - 1) { 
-     //  // no hitting success, 
-     //  // keep detect for collision
-     //  collide(); // old target overlapped
-     //  collide2(); 
-     //  collide3();
-     //  collide4();
-     //}
+     while(!targetFlip && count < entries.length - 1) { 
+       // no hitting success, 
+       // keep detect for collision
+       collide(); //old target overlapped
+       collide2(); 
+       //collide3();
+       //collide4();
+     }
      // hitting success, fill an icehole
      String entry = entries[i];
      refillMissingIce(entry);
@@ -354,14 +355,16 @@ void onVisibleUser(SimpleOpenNI curContext, int userId)
 // Other functions
 void time() {
     textAlign(CENTER);
-    fill(color(255,0,23));
-    textFont(font,28);
+    
+   
     if(sw.isRunning()){
-      fill(color(255,0,23));
-      text(nf(sw.hour(), 2)+":"+nf(sw.minute(), 2)+":"+nf(sw.second(), 2), SCREEN_WIDTH/2, 80);
+       textFont(font,28);
+      fill(MESSAGE_TEXT_COLOR);
+      text(nf(sw.hour(), 2)+":"+nf(sw.minute(), 2)+":"+nf(sw.second(), 2), SCREEN_WIDTH/2, 40);
     }else{
+       textFont(font,40);
       fill(color(random(0),random(255),random(150)));
-      text("Lost tracking", SCREEN_WIDTH/2, 80);
+      text("Lost tracking", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
     }
 }
 
