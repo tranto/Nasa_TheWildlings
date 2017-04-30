@@ -35,6 +35,7 @@ StopWatchTimer sw;
 SoundManager soundMgt;
 Levelup levelup;
 Target[] listTarget = new Target[10];
+boolean targetFlip = false; // if true, create a new target, old target disappeared
 
 void setup()
 {
@@ -134,12 +135,29 @@ void draw()
   }
 }
 
-void drawSimpleFigure() {
 
-    //Show Target for user to hit
-    newTarget.display();
-    PVector jointPos = getJointPosition(SimpleOpenNI.SKEL_LEFT_HAND);
-    // Hand Tracking 
+
+void drawAllHitingTargets(String filepath) {
+    // data input  
+    String[] entries = loadStrings(filepath);
+    for(int i = 0; i < entries.length; i++) {
+      //Show Target for user to hit
+      newTarget.display();
+    }
+}
+
+void drawSimpleFigure() {
+    // draw hitting targets depends on how many entries we have in the data file
+    // Data input format: 
+    // The longtitude and latitude are represented to their equivalent center position on the page as PVector
+    // x1, y1, size1, Wimagepath1\n
+    // x2, y2, size2, Wimagepath2\n
+    
+    // MODE1: draw all targets at once
+    // drawAllHitingTargets("testdata.txt");
+    String filepath = "data/images/testdata.txt";
+    // Hand Tracking
+    PVector jointPos = getJointPosition(SimpleOpenNI.SKEL_LEFT_HAND); 
     float distanceScalar = (400/jointPos.z);
     drawCircleL(jointPos, distanceScalar);
     
@@ -148,19 +166,37 @@ void drawSimpleFigure() {
     drawCircleR(jointPos, distanceScalar);
   
     // Feet Tracking 
-    jointPos = getJointPosition(SimpleOpenNI.SKEL_LEFT_FOOT);
-    distanceScalar = (400/jointPos.z);
-    drawCircleL2(jointPos, distanceScalar);
+    //jointPos = getJointPosition(SimpleOpenNI.SKEL_LEFT_FOOT);
+    //distanceScalar = (400/jointPos.z);
+    //drawCircleL2(jointPos, distanceScalar);
   
-    jointPos = getJointPosition(SimpleOpenNI.SKEL_RIGHT_FOOT);
-    distanceScalar = (400/jointPos.z);
-    drawCircleR2(jointPos, distanceScalar);
-   
-    // Collision detection 
-    collide();
-    collide2(); 
-    collide3();
-    collide4();       
+    //jointPos = getJointPosition(SimpleOpenNI.SKEL_RIGHT_FOOT);
+    //distanceScalar = (400/jointPos.z);
+    //drawCircleR2(jointPos, distanceScalar);
+    
+    // MODE2: draw one target, the user hits it and new target appears
+    // create a new target and fill ice holes from the data sheet after an old target is hit
+    watchHit(filepath);
+}
+
+void watchHit(String filepath) {
+   String[] entries = loadStrings(filepath);
+   newTarget = new Target();
+   // place data sequencially 
+   for(int i=0; i < entries.length; i++) {
+     while(!targetFlip && count < entries.length - 1) { 
+       // no hitting success, 
+       // keep detect for collision
+       collide(); // old target overlapped
+       collide2(); 
+       collide3();
+       collide4();
+     }
+     // hitting success, fill an icehole
+     String entry = entries[i];
+     refillMissingIce(entry);
+     targetFlip = false;
+   }  
 }
 
 //If collision is ffdetected create a new target (Grape) in a random location on the screen and add 1 point to the users score.
@@ -169,6 +205,7 @@ void collide() {
     if(dist(newTarget.xpos,newTarget.ypos,a,b) < COLLISION_DISTANCE){ 
         newTarget = new Target();
         count = count + 1;
+        targetFlip = true;
         print ("Count is = " + count);
         soundMgt.playPunchSound();
     }
@@ -178,6 +215,7 @@ void collide2() {
     if(dist(newTarget.xpos,newTarget.ypos,c,d) < COLLISION_DISTANCE) {
         newTarget = new Target();
         count = count+1;
+        targetFlip = true;
         print ("Count is = " + count);  
         soundMgt.playPunchSound();
     }
@@ -187,6 +225,7 @@ void collide3() {
     if(dist(newTarget.xpos,newTarget.ypos,e,f) < COLLISION_DISTANCE) {
        newTarget = new Target();
        count = count+1;  
+       targetFlip = true;
        print ("Count is = " + count);
        soundMgt.playPunchSound();
     }
@@ -196,12 +235,11 @@ void collide4() {
     if(dist(newTarget.xpos,newTarget.ypos,g,h) < COLLISION_DISTANCE) {
        newTarget = new Target();
        count = count+1;
+       targetFlip = true;
        print ("Count is = " + count);  
        soundMgt.playPunchSound();
     }
 }
-
-
 
 PVector getJointPosition(int joint) {
   PVector jointPositionRealWorld = new PVector();
@@ -217,7 +255,7 @@ void drawCircleL(PVector position, float distanceScalar) {
     translate(position.x, position.y);
     a = position.x;
     b = position.y;
-    fill(0, 0, 255); // black
+    fill(255, 136, 9); // black
     ellipse(0, 0,distanceScalar* 100,distanceScalar* 100);
     //lefthand = loadImage(ImagePath); 
     //size(lefthand.width, lefthand.height);
@@ -257,6 +295,20 @@ void drawCircleR2(PVector position, float distanceScalar) {
    fill(0, 0, 255); // blue
    ellipse(0, 0, distanceScalar* 100,distanceScalar* 100);
    popMatrix();
+}
+
+// Fill a missing ice hole with scaled picture on the background
+void refillMissingIce(String entry) {
+  // line format: x1, y1, sizescale1, imagepath1(seperated by [,]or[white space])
+  String[] details = splitTokens(entry, ", ");
+  float x = float(details[0]);
+  float y = float(details[1]);
+  int scale = int(details[2]);
+  String filepath = details[3];
+  // load the image and place it at (x, y) with scale  
+  PImage missingIce = loadImage(filepath);
+  image(missingIce, x, y);
+  missingIce.resize(scale, scale);
 }
 
 // -----------------------------------------------------------------
