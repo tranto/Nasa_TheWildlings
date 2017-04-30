@@ -15,9 +15,10 @@ int     SCREEN_WIDTH = 800; // 1920;//
 int     SCREEN_HEIGHT = 600; //1080;//
 String  FONT_NAME_48 = "Copperplate-Bold-50.vlw";//"Chalkduster-48.vlw";
 String  FONT_NAME_50 = "";
-String  MENU_BG_IMAGE = "images/background.jpg";
-String  GAME_PLAY_IMAGE = "images/dojo.jpg";
-String  SYMBOLS_END_GAME_IMAGE = "images/levelup_icon.png";
+String  MENU_BG_IMAGE = "data/images/background.jpg";
+String  GAME_PLAY_IMAGE = "data/images/dojo.jpg";
+String  SYMBOLS_END_GAME_IMAGE = "data/images/levelup_icon.png";
+String  TEST_DATA_File = "data/test_data.txt";
 int     TIME_UP = 40100;//60100;
 int     COLLISION_DISTANCE = 75;
 
@@ -163,7 +164,7 @@ void drawSimpleFigure() {
     
     // MODE2: draw one target, the user hits it and new target appears
     // create a new target and fill ice holes from the data sheet after an old target is hit
-    watchHit(filepath);
+    watchHit(TEST_DATA_File);
 }
 
 void watchHit(String filepath) {
@@ -291,9 +292,9 @@ void refillMissingIce(String entry) {
   float x = float(details[0]);
   float y = float(details[1]);
   int scale = int(details[2]);
-  String filepath = details[3];
+  String imgfilepath = details[3];
   // load the image and place it at (x, y) with scale  
-  PImage missingIce = loadImage(filepath);
+  PImage missingIce = loadImage(imgfilepath);
   image(missingIce, x, y);
   missingIce.resize(scale, scale);
 }
