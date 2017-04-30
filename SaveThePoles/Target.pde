@@ -16,12 +16,14 @@ class Target {
   float rightBorderG;
   float leftBorderG;
   boolean alive = true;
+  PImage background;
   
   
-  Target() {
+  Target(String filePath) {
     //c = color(random(180, 255), 44, 208); // Random purple colour
     xpos = int(random(WIDTH_LIMIT_LEFT, WIDTH_LIMIT_RIGHT));
     ypos = int(random(HEIGHT_LIMIT_TOP, HEIGHT_LIMIT_BOTTOM));
+    background = loadImage(filePath);
     setBordersG();
   }
   void setBordersG() {
@@ -32,27 +34,28 @@ class Target {
   }
   void display() {
     rectMode(CENTER);
-    stroke(0);
-    c1 = color(random(255), random(255), random(255));
-    fill(c1);
-    setBordersG();    
+     image(background,xpos, ypos);
+    //stroke(0);
+    //c1 = color(random(255), random(255), random(255));
+    //fill(c1);
+    //setBordersG();    
     
-    ellipseMode(RADIUS);  // Set ellipseMode to RADIUS
-    ellipse(xpos, ypos, sizeW, sizeH);  // Draw white ellipse using RADIUS mode
+    //ellipseMode(RADIUS);  // Set ellipseMode to RADIUS
+    //ellipse(xpos, ypos, sizeW, sizeH);  // Draw white ellipse using RADIUS mode
       
       
-    fill(c1/8);
-    ellipseMode(RADIUS);  // Set ellipseMode to RADIUS
-    ellipse(xpos, ypos, sizeW/1.5, sizeH/1.5);  // Draw white ellipse using RADIUS mode
+    //fill(c1/8);
+    //ellipseMode(RADIUS);  // Set ellipseMode to RADIUS
+    //ellipse(xpos, ypos, sizeW/1.5, sizeH/1.5);  // Draw white ellipse using RADIUS mode
 
 
-    ellipseMode(CENTER);  // Set ellipseMode to CENTER
-    fill(c1/2); 
-    ellipse(xpos, ypos, sizeW, sizeH);  // Draw gray ellipse using CENTER mode
+    //ellipseMode(CENTER);  // Set ellipseMode to CENTER
+    //fill(c1/2); 
+    //ellipse(xpos, ypos, sizeW, sizeH);  // Draw gray ellipse using CENTER mode
     
-    ellipseMode(CENTER);  // Set ellipseMode to CENTER
-    fill(c1/1.5); 
-    ellipse(xpos, ypos, sizeW/2, sizeH/2); 
+    //ellipseMode(CENTER);  // Set ellipseMode to CENTER
+    //fill(c1/1.5); 
+    //ellipse(xpos, ypos, sizeW/2, sizeH/2); 
   
 
     

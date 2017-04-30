@@ -18,6 +18,8 @@ String  FONT_NAME_50 = "";
 String  MENU_BG_IMAGE = "images/background.jpg";
 String  GAME_PLAY_IMAGE = "images/gamescreen.jpg";
 String  SYMBOLS_END_GAME_IMAGE = "images/levelup_icon.png";
+String  TEST_DATA_FILE = "data/test_data.txt";
+String[]  ITEM_FILE_PATHS = {"data/images/bicycle.png","data/images/garbagebin.png","data/images/fridge.png","data/images/lightbuilb.png","data/images/planttree.png","data/images/solarpanel.png", "data/images/fuel.png", "data/images/aircon.png",};
 int     TIME_UP = 40100;//60100;
 int     COLLISION_DISTANCE = 75;
 int     HEADER_TEXT_COLOR = color(157,181,200); //gray
@@ -39,7 +41,7 @@ boolean targetFlip = false; // if true, create a new target, old target disappea
 
 void setup()
 {
-  
+    
     context = new SimpleOpenNI(this);
     if(context.isInit() == false)
     {
@@ -50,14 +52,14 @@ void setup()
     // enable depthMap generation 
     context.enableDepth();
     context.mirror();
-    
     // enable skeleton generation for joints and initalise variables
     context.enableUser();
     
     //menu
     menu = new Menu(MENU_BG_IMAGE);
     levelup = new Levelup(SYMBOLS_END_GAME_IMAGE);
-    newTarget = new Target(); 
+
+    newTarget = generateTarget(); 
     
     RoundTimerClock = millis();
     sw = new StopWatchTimer();
@@ -88,8 +90,8 @@ void setup()
     size(1344, 756);
     surface.setResizable(true);
     
-    for (int i = 0; i< listTarget.length; i++){     
-           listTarget[i] = new Target();
+    for (int i = 0; i< listTarget.length; i++){  
+           listTarget[i] = generateTarget();
      }
             
     font = createFont(FONT_NAME_48,42,true);//loadFont(FONT_NAME_48);//
@@ -116,13 +118,17 @@ void draw()
             fill(HEADER_TEXT_COLOR);
             text(YOUR_SCORE_TEXT + count,SCREEN_WIDTH/2,0);
         
-             for (int i = 0; i< listTarget.length; i++){     
-                if (listTarget[i].alive == true) {
-                    listTarget[i].display();
-                }
-             }
+             //for (int i = 0; i< listTarget.length; i++){     
+             //   if (listTarget[i].alive == true) {
+             //       listTarget[i].display();
+             //       break;
+             //   }
+             //}
             // Display Timer to user
             time();
+            
+            // remove the following line when with Kinect device 
+           // watchHit(TEST_DATA_FILE);
             if(context.isTrackingSkeleton(1)) {
                 drawSimpleFigure();
             }
@@ -136,6 +142,12 @@ void draw()
 }
 
 
+Target generateTarget() {
+    Target newTargetTemp;
+    String itemName = ITEM_FILE_PATHS[int(random(0,5))];
+    newTargetTemp = new Target(itemName); 
+    return newTargetTemp;
+}
 
 void drawAllHitingTargets(String filepath) {
     // data input  
@@ -154,8 +166,8 @@ void drawSimpleFigure() {
     // x2, y2, size2, Wimagepath2\n
     
     // MODE1: draw all targets at once
-    // drawAllHitingTargets("testdata.txt");
-    String filepath = "data/images/testdata.txt";
+   
+    newTarget.display();
     // Hand Tracking
     PVector jointPos = getJointPosition(SimpleOpenNI.SKEL_LEFT_HAND); 
     float distanceScalar = (400/jointPos.z);
@@ -173,25 +185,27 @@ void drawSimpleFigure() {
     //jointPos = getJointPosition(SimpleOpenNI.SKEL_RIGHT_FOOT);
     //distanceScalar = (400/jointPos.z);
     //drawCircleR2(jointPos, distanceScalar);
+      collide(); // old target overlapped
+      collide2(); 
     
-    // MODE2: draw one target, the user hits it and new target appears
-    // create a new target and fill ice holes from the data sheet after an old target is hit
-    watchHit(filepath);
 }
 
 void watchHit(String filepath) {
    String[] entries = loadStrings(filepath);
-   newTarget = new Target();
+   newTarget = generateTarget();
+   newTarget.display();
    // place data sequencially 
    for(int i=0; i < entries.length; i++) {
-     while(!targetFlip && count < entries.length - 1) { 
-       // no hitting success, 
-       // keep detect for collision
-       collide(); // old target overlapped
-       collide2(); 
-       collide3();
-       collide4();
-     }
+     println(entries[i]);
+     // uncomment the following when plug into Kinect
+     //while(!targetFlip && count < entries.length - 1) { 
+     //  // no hitting success, 
+     //  // keep detect for collision
+     //  collide(); // old target overlapped
+     //  collide2(); 
+     //  collide3();
+     //  collide4();
+     //}
      // hitting success, fill an icehole
      String entry = entries[i];
      refillMissingIce(entry);
@@ -203,7 +217,7 @@ void watchHit(String filepath) {
 void collide() {
     
     if(dist(newTarget.xpos,newTarget.ypos,a,b) < COLLISION_DISTANCE){ 
-        newTarget = new Target();
+        newTarget = generateTarget();
         count = count + 1;
         targetFlip = true;
         print ("Count is = " + count);
@@ -213,7 +227,7 @@ void collide() {
 
 void collide2() {
     if(dist(newTarget.xpos,newTarget.ypos,c,d) < COLLISION_DISTANCE) {
-        newTarget = new Target();
+        newTarget = generateTarget();
         count = count+1;
         targetFlip = true;
         print ("Count is = " + count);  
@@ -221,25 +235,25 @@ void collide2() {
     }
 }
 
-void collide3() {
-    if(dist(newTarget.xpos,newTarget.ypos,e,f) < COLLISION_DISTANCE) {
-       newTarget = new Target();
-       count = count+1;  
-       targetFlip = true;
-       print ("Count is = " + count);
-       soundMgt.playPunchSound();
-    }
-}
+//void collide3() {
+//    if(dist(newTarget.xpos,newTarget.ypos,e,f) < COLLISION_DISTANCE) {
+//       newTarget = new Target();
+//       count = count+1;  
+//       targetFlip = true;
+//       print ("Count is = " + count);
+//       soundMgt.playPunchSound();
+//    }
+//}
 
-void collide4() {
-    if(dist(newTarget.xpos,newTarget.ypos,g,h) < COLLISION_DISTANCE) {
-       newTarget = new Target();
-       count = count+1;
-       targetFlip = true;
-       print ("Count is = " + count);  
-       soundMgt.playPunchSound();
-    }
-}
+//void collide4() {
+//    if(dist(newTarget.xpos,newTarget.ypos,g,h) < COLLISION_DISTANCE) {
+//       newTarget = new Target();
+//       count = count+1;
+//       targetFlip = true;
+//       print ("Count is = " + count);  
+//       soundMgt.playPunchSound();
+//    }
+//}
 
 PVector getJointPosition(int joint) {
   PVector jointPositionRealWorld = new PVector();
@@ -270,8 +284,9 @@ void drawCircleR(PVector position, float distanceScalar) {
     translate(position.x, position.y);
     c=position.x;
     d=position.y;
-    fill(0, 0, 255); // blue
+    fill(255, 136, 9); // blue
     ellipse(0, 0, distanceScalar*100, distanceScalar* 100);
+     print ("right hand ");
     popMatrix();
 }
 
@@ -304,9 +319,9 @@ void refillMissingIce(String entry) {
   float x = float(details[0]);
   float y = float(details[1]);
   int scale = int(details[2]);
-  String filepath = details[3];
+  String imgfilepath = details[3];
   // load the image and place it at (x, y) with scale  
-  PImage missingIce = loadImage(filepath);
+  PImage missingIce = loadImage(imgfilepath);
   image(missingIce, x, y);
   missingIce.resize(scale, scale);
 }

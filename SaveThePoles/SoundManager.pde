@@ -1,7 +1,7 @@
 /*  Copyright (c) 2014 Awesome Team. All rights reserved
 *  Version without pure data */
 String PUNCH_AUDIO = "audio/punch.wav";
-String KICK_AUDIO_PATH = "audio/kick.wav"; 
+String KICK_AUDIO_PATH = "audio/punchkick.wav"; 
 String GAME_BACKGROUND_AUDIO_PATH = "audio/background.wav";
 String INTRO_AUDIO_PATH = "audio/Intro.wav";
 String PUNCH_KICK_AUDIO_PATH = "audio/punchkick.wav";

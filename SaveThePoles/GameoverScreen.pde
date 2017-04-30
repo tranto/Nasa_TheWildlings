@@ -2,21 +2,22 @@
 *  Version without pure data */
 
 
-String GAME_OVER_TEXT = "GAME OVER";
-String YOUR_SCORE_TEXT = "Your score is: ";
+String GAME_OVER_TEXT = "LEVEL UP";
+String YOUR_SCORE_TEXT = "YOU HAVE SAVED: ";
 int LIMIT_POSITION = 200;
 int SYMBOL_WIDTH = 300;
 int SYMBOL_HEIGHT = 346;
-
+String BACKGROUND_PATH = "images/blankBg.jpg";
 class Levelup{
     PImage background;
+    PImage icony;
     float titlePositionY ;
     float imagePositionY;
     PFont font;
     
     Levelup(String ImagePath){
-       background = loadImage(ImagePath);
-  
+       icony = loadImage(ImagePath);
+       background = loadImage(BACKGROUND_PATH);
        titlePositionY = 0;
        imagePositionY = imagePositionY + 20;
        this.font = loadFont(FONT_NAME_48);
