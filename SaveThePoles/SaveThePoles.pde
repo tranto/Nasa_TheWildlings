@@ -40,18 +40,18 @@ boolean targetFlip = false; // if true, create a new target, old target disappea
 void setup()
 {
     
-    context = new SimpleOpenNI(this);
-    if(context.isInit() == false)
-    {
-        println("Can't init SimpleOpenNI, maybe the camera is not connected!"); 
-        exit();
-        return;  
-    }
-    // enable depthMap generation 
-    context.enableDepth();
-    context.mirror();
-    // enable skeleton generation for joints and initalise variables
-    context.enableUser();
+    //context = new SimpleOpenNI(this);
+    //if(context.isInit() == false)
+    //{
+    //    println("Can't init SimpleOpenNI, maybe the camera is not connected!"); 
+    //    exit();
+    //    return;  
+    //}
+    //// enable depthMap generation 
+    //context.enableDepth();
+    //context.mirror();
+    //// enable skeleton generation for joints and initalise variables
+    //context.enableUser();
     
     //menu
     menu = new Menu(MENU_BG_IMAGE);
@@ -91,9 +91,9 @@ void draw()
 {
     int startTime = millis();
     if (startTime == 0 || startTime < RoundTimerClock + TIME_UP){
-         context.update();
+         //context.update();
         fill(255); // white
-        image(context.depthImage(),0,0); 
+        //image(context.depthImage(),0,0); 
         // draw the skeleton if it's available
         if(!menu.disappear()){
             menu.display();
@@ -111,9 +111,12 @@ void draw()
         
             // Display Timer to user
             time();
-            if(context.isTrackingSkeleton(1)) {
-                drawSimpleFigure();
-            }
+            
+            // remove the following line when with Kinect device 
+            watchHit(TEST_DATA_File);
+            //if(context.isTrackingSkeleton(1)) {
+            //    drawSimpleFigure();
+            //}
       }
 
     }
@@ -142,8 +145,12 @@ void drawSimpleFigure() {
     // x2, y2, size2, Wimagepath2\n
     
     // MODE1: draw all targets at once
-    // drawAllHitingTargets("testdata.txt");
-    filepath = "testdata.txt";
+    // drawAllHitingTargets(TEST_DATA_File);
+    
+    // MODE2: draw one target, the user hits it and new target appears
+    // create a new target and fill ice holes from the data sheet after an old target is hit
+    watchHit(TEST_DATA_File);
+    
     // Hand Tracking
     PVector jointPos = getJointPosition(SimpleOpenNI.SKEL_LEFT_HAND); 
     float distanceScalar = (400/jointPos.z);
@@ -162,25 +169,25 @@ void drawSimpleFigure() {
     distanceScalar = (400/jointPos.z);
     drawCircleR2(jointPos, distanceScalar);
     
-    // MODE2: draw one target, the user hits it and new target appears
-    // create a new target and fill ice holes from the data sheet after an old target is hit
-    watchHit(TEST_DATA_File);
+    
 }
 
 void watchHit(String filepath) {
    String[] entries = loadStrings(filepath);
-   int i = 0;
    newTarget = new Target();
+   newTarget.display();
    // place data sequencially 
    for(int i=0; i < entries.length; i++) {
-     while(!targetFlip && count < entries.length - 1) { 
-       // no hitting success, 
-       // keep detect for collision
-       collide(); // old target overlapped
-       collide2(); 
-       collide3();
-       collide4();
-     }
+     println(entries[i]);
+     // uncomment the following when plug into Kinect
+     //while(!targetFlip && count < entries.length - 1) { 
+     //  // no hitting success, 
+     //  // keep detect for collision
+     //  collide(); // old target overlapped
+     //  collide2(); 
+     //  collide3();
+     //  collide4();
+     //}
      // hitting success, fill an icehole
      String entry = entries[i];
      refillMissingIce(entry);
