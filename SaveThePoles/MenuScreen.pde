@@ -3,16 +3,20 @@
 
 /* some settings */
 String GAME_NAME = "SAVE THE POLLS";
-int LIMIT_TIME = 40;
+String ICECUBE_PATH = "images/icecube.png";
+int LIMIT_TIME_TARGET = 40;
 int TIME_TO_CHANGE = 20;
 int SMALLEST_CIRCLE_WIDTH = 20 ;
 int SMALLEST_CIRCLE_HEIGHT = 20;
 int TITLE_FONT_SIZE = 50;
 int SUB_FONT_SIZE = 20;
-int COUNT_DOWN_FONT_SIZE = 80;
-
+int COUNT_DOWN_FONT_SIZE = 42;
+int ICECUBE_WIDTH = 154;
+int ICECUBE_HEIGHT = 128;
+int PADDING_TOP = 80;
 class Menu{
     PImage background;
+    PImage iceCube;
     PFont font;
     color sampleColor;
     float sampleTargetX;
@@ -25,10 +29,10 @@ class Menu{
     
     //constructor    
     Menu(String ImagePath){
-       this.font = loadFont(FONT_NAME_48);
-       background = loadImage(ImagePath);
-       //size(800, 600);//background.width, background.height);
-       background(800); 
+       this.font   = loadFont(FONT_NAME_48);
+       background  = loadImage(ImagePath);
+       iceCube     = loadImage(ICECUBE_PATH);
+       background.resize(1344, 756);
        sampleColor = color(255, random(200,217), random(197,214));
        float targetWidth = SMALLEST_CIRCLE_WIDTH * 4;
        float targetHeight = SMALLEST_CIRCLE_WIDTH * 4;
@@ -41,31 +45,20 @@ class Menu{
     void display(){
       if(!disappear){
          image(background,0, 0);
-         drawSimpleTarget();
+         image(iceCube, (SCREEN_WIDTH - ICECUBE_WIDTH)/2, (SCREEN_HEIGHT - ICECUBE_HEIGHT)/2 + PADDING_TOP);
+        // drawSimpleTarget();
          textFont(font, TITLE_FONT_SIZE);
-         float textWidth = textWidth(GAME_NAME);
-         fill(255);
-         text(GAME_NAME, (SCREEN_WIDTH - textWidth)/2, 100);
-         String startText = "Ready";
-         textWidth = textWidth(startText);
-         textSize(20);
-      
-         float x = SMALLEST_CIRCLE_WIDTH * 6 * sin(theta);
-         float y = SMALLEST_CIRCLE_HEIGHT * 6 *cos(theta);
-         theta += 0.02;
-         text(startText, x + SCREEN_WIDTH/2 , y + 260);
-         String readyText = "" + countDown;
-     
-         textWidth = textWidth(readyText);
-      
+         String countDownNumber = "" + countDown;
+         float textWidth = textWidth(countDownNumber);
+         
          if(timeToCount == TIME_TO_CHANGE){
             countDown --;
             timeToCount = 0;
          }
          timeToCount++;
          textSize(COUNT_DOWN_FONT_SIZE);
-         fill(0);
-         text(readyText, 375, 315);
+         fill(HEADER_TEXT_COLOR);
+         text(countDownNumber, (SCREEN_WIDTH - textWidth)/2, (SCREEN_HEIGHT - ICECUBE_HEIGHT)/2 + iceCube.height + 20);
          if(countDown <= 0){
             disappear = true;
          }
@@ -74,7 +67,7 @@ class Menu{
     
   void drawSimpleTarget() {
      timeToChangeColor++;
-     if(timeToChangeColor == LIMIT_TIME){
+     if(timeToChangeColor == LIMIT_TIME_TARGET){
         timeToChangeColor = 0;
         sampleColor = color(255, random(200,217), random(197,214));
      }

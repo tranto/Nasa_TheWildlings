@@ -16,8 +16,7 @@ class Levelup{
     
     Levelup(String ImagePath){
        background = loadImage(ImagePath);
-       //size(300, 346);
-       //size(SYMBOL_WIDTH, SYMBOL_HEIGHT);
+  
        titlePositionY = 0;
        imagePositionY = imagePositionY + 20;
        this.font = loadFont(FONT_NAME_48);

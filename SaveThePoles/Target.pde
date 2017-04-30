@@ -15,6 +15,7 @@ class Target {
   float bottomBorderG;
   float rightBorderG;
   float leftBorderG;
+  boolean alive = true;
   
   
   Target() {
@@ -55,6 +56,9 @@ class Target {
   
 
     
+  }
+  void destroyed(){
+      alive = false;
   }
 //  void tele() {
 //     xpos = int(random(700));

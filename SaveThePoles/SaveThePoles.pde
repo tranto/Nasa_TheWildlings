@@ -11,16 +11,16 @@ import ddf.minim.effects.*;
 import SimpleOpenNI.*;
 
 /*setting*/
-int     SCREEN_WIDTH = 800; // 1920;// 
-int     SCREEN_HEIGHT = 600; //1080;//
+int     SCREEN_WIDTH = 1344; // 1920;// 70%
+int     SCREEN_HEIGHT = 756; //1080;// 70%
 String  FONT_NAME_48 = "Copperplate-Bold-50.vlw";//"Chalkduster-48.vlw";
 String  FONT_NAME_50 = "";
 String  MENU_BG_IMAGE = "images/background.jpg";
-String  GAME_PLAY_IMAGE = "images/dojo.jpg";
+String  GAME_PLAY_IMAGE = "images/gamescreen.jpg";
 String  SYMBOLS_END_GAME_IMAGE = "images/levelup_icon.png";
 int     TIME_UP = 40100;//60100;
 int     COLLISION_DISTANCE = 75;
-
+int     HEADER_TEXT_COLOR = color(157,181,200); //gray
 //GLobal Variables
 float x,y,a,b,r,_r,c,d,e,f,g,h,w,y2,r2,_r2;
 int count;
@@ -34,10 +34,11 @@ Target newTarget;
 StopWatchTimer sw;
 SoundManager soundMgt;
 Levelup levelup;
+Target[] listTarget = new Target[10];
 
 void setup()
 {
-    
+  
     context = new SimpleOpenNI(this);
     if(context.isInit() == false)
     {
@@ -48,6 +49,7 @@ void setup()
     // enable depthMap generation 
     context.enableDepth();
     context.mirror();
+    
     // enable skeleton generation for joints and initalise variables
     context.enableUser();
     
@@ -80,7 +82,15 @@ void setup()
     d  =  0;  
     count  =  0;
     timer  =  0;
-    size(1200,900); 
+    
+   
+    size(1344, 756);
+    surface.setResizable(true);
+    
+    for (int i = 0; i< listTarget.length; i++){     
+           listTarget[i] = new Target();
+     }
+            
     font = createFont(FONT_NAME_48,42,true);//loadFont(FONT_NAME_48);//
     soundMgt.playintro();
 }
@@ -97,16 +107,19 @@ void draw()
             menu.display();
         }else{
             soundMgt.playbackground();
-            PImage picture = loadImage(GAME_PLAY_IMAGE);
-             
-            size(1200,900);//(picture.width, picture.height);
-            image(picture, 0, 0); 
-        
-           
+            PImage gamePlayBackground = loadImage(GAME_PLAY_IMAGE);
+            gamePlayBackground.resize(1344, 756);
+            image(gamePlayBackground, 0, 0); 
+            
             textFont(font,28);
-            fill(color(255,0,23));
-            text(YOUR_SCORE_TEXT + count,SCREEN_WIDTH/2,40);
+            fill(HEADER_TEXT_COLOR);
+            text(YOUR_SCORE_TEXT + count,SCREEN_WIDTH/2,0);
         
+             for (int i = 0; i< listTarget.length; i++){     
+                if (listTarget[i].alive == true) {
+                    listTarget[i].display();
+                }
+             }
             // Display Timer to user
             time();
             if(context.isTrackingSkeleton(1)) {
@@ -152,6 +165,7 @@ void drawSimpleFigure() {
 
 //If collision is ffdetected create a new target (Grape) in a random location on the screen and add 1 point to the users score.
 void collide() {
+    
     if(dist(newTarget.xpos,newTarget.ypos,a,b) < COLLISION_DISTANCE){ 
         newTarget = new Target();
         count = count + 1;

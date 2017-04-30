@@ -65,7 +65,7 @@ class SoundManager{
 
   void playintro(){
     player.close();
-    player = minim.loadFile(INTRO_AUDIO_PATH, 2048);
+    player = minim.loadFile(GAME_BACKGROUND_AUDIO_PATH, 2048);// minim.loadFile(INTRO_AUDIO_PATH, 2048);
     player.play();
   }
   
